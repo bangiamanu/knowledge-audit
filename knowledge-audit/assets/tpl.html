@@ -1,0 +1,153 @@
+<title>Knowledge Map Review</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,600&display=swap">
+<style>
+/* Layout: file-browser. Left: one tree (Global / People / Projects / Skills) with red and yellow flag counts. Right: whatever is selected, one thing at a time. */
+:root{
+ --bg:#f6f7f5;--panel:#ffffff;--side:#eef1ee;--fg:#1d2321;--muted:#5d6763;--line:#dde2df;--accent:#2f6b57;--sel:#dcebe4;
+ --bad-bg:#f8e1df;--bad-fg:#a1271b;--warn-bg:#fbefd9;--warn-fg:#7a4b00;--y-bg:#fdf1b8;--y-fg:#8c6a00;--ok-fg:#2f6b57;--code-bg:#f3f5f3;
+ --f-display:"Fraunces",Georgia,serif;--f-body:"IBM Plex Sans",system-ui,sans-serif;--f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141816;--panel:#1b201e;--side:#171c1a;--fg:#e4e9e6;--muted:#9aa6a1;--line:#2c3431;--accent:#7cc3a8;--sel:#24352e;--bad-bg:#3d1f1c;--bad-fg:#f2a49b;--warn-bg:#3a2e17;--warn-fg:#f0c77d;--y-bg:#3a3214;--y-fg:#f5d257;--ok-fg:#7cc3a8;--code-bg:#111412;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141816;--panel:#1b201e;--side:#171c1a;--fg:#e4e9e6;--muted:#9aa6a1;--line:#2c3431;--accent:#7cc3a8;--sel:#24352e;--bad-bg:#3d1f1c;--bad-fg:#f2a49b;--warn-bg:#3a2e17;--warn-fg:#f0c77d;--y-bg:#3a3214;--y-fg:#f5d257;--ok-fg:#7cc3a8;--code-bg:#111412;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--f-body)}
+.app{display:grid;grid-template-columns:300px 1fr;height:100%}
+aside{background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.brand{padding:14px 16px 8px}
+.brand h1{font:600 1.2rem/1.2 var(--f-display);margin:0}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:.8rem}
+.tools{display:flex;flex-direction:column;gap:6px;padding:4px 16px 10px;border-bottom:1px solid var(--line)}
+.tools input[type=search]{font:inherit;font-size:.88rem;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--fg)}
+.tools label{font-size:.82rem;color:var(--muted);display:flex;gap:6px;align-items:center;cursor:pointer}
+nav.tree{overflow-y:auto;padding:8px 8px 24px;flex:1;min-height:0}
+.tree ul{list-style:none;margin:0;padding-left:12px}
+.tree>ul{padding-left:0}
+.row{display:flex;align-items:baseline;gap:6px;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:.88rem;user-select:none}
+.row:hover{background:var(--sel)}
+.row.on{background:var(--sel);font-weight:600}
+.tw{width:10px;color:var(--muted);font-size:.7rem;flex:none}
+.nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .nm{font-family:var(--f-mono);font-size:.8rem}
+.ct{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.fc{font-size:.72rem;font-weight:600;color:var(--bad-fg);font-variant-numeric:tabular-nums}
+.fy{font-size:.72rem;font-weight:600;color:var(--y-fg);font-variant-numeric:tabular-nums}
+.sep{color:var(--muted);font-size:.72rem}
+main{overflow-y:auto;min-width:0}
+.pane{max-width:900px;padding-inline:24px;padding-block:20px 64px}
+.crumb{font-size:.82rem;color:var(--muted);margin-bottom:6px}
+.crumb a{color:var(--accent);text-decoration:none;cursor:pointer}
+h2{font:600 1.6rem/1.2 var(--f-display);margin:0 0 4px;text-wrap:balance;word-break:break-word}
+.lede{color:var(--muted);margin:0 0 16px;max-width:65ch}
+.lede a{color:var(--accent)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0 24px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;cursor:pointer}
+.tile:hover{border-color:var(--accent)}
+.tile b{display:block;font:600 1.05rem var(--f-display)}
+.tile .big{font-size:1.6rem;font-variant-numeric:tabular-nums}
+.tile .s{color:var(--muted);font-size:.82rem}
+.rules{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 16px;font-size:.88rem}
+.rules ol{margin:6px 0 0;padding-left:20px}
+h3{font-size:.95rem;margin:24px 0 8px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.list{background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:9px 14px;border-top:1px solid var(--line);cursor:pointer}
+.li:first-child{border-top:0}
+.li:hover{background:var(--sel)}
+.li .a{font-weight:500;word-break:break-word}
+.li.file .a{font:500 .88rem var(--f-mono)}
+.li .d{grid-column:1;color:var(--muted);font-size:.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li .r{grid-row:1/3;grid-column:2;align-self:center;text-align:right;font-size:.8rem;font-variant-numeric:tabular-nums;color:var(--muted)}
+.li .r .fc,.li .r .fy{font-size:.8rem}
+.ok{color:var(--ok-fg);font-size:.8rem}
+.flags{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px}
+.flags li{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:.9rem;display:grid;gap:2px}
+.pill{justify-self:start;font-size:.7rem;font-weight:600;letter-spacing:.03em;padding:1px 8px;border-radius:999px;background:var(--warn-bg);color:var(--warn-fg)}
+.pill.hot{background:var(--bad-bg);color:var(--bad-fg)}
+.pill.yel{background:var(--y-bg);color:var(--y-fg)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;margin:0 0 8px}
+.legend .tot{font-size:1rem}
+.sg{color:var(--accent);font-size:.85rem}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:12px 14px;font:.8rem/1.55 var(--f-mono);white-space:pre-wrap;word-break:break-word;margin:0}
+.ext{color:var(--accent);font-size:.85rem}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.85rem;background:var(--panel);border:1px solid var(--line)}
+th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+td a{color:var(--accent)}
+.menu{display:none}
+.row:focus-visible,.li:focus-visible,.tile:focus-visible,a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media (max-width:760px){
+ .app{grid-template-columns:1fr;height:auto}
+ aside{border-right:0;border-bottom:1px solid var(--line)}
+ aside.closed nav.tree,aside.closed .tools{display:none}
+ nav.tree{max-height:60vh}
+ .menu{display:inline-block;font:inherit;font-size:.82rem;margin-top:6px;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:3px 10px}
+ .pane{padding-inline:16px}
+ main{overflow:visible}
+}
+</style>
+<div class="app">
+<aside id="side" class="closed">
+ <div class="brand"><h1>Knowledge map</h1><p id="snap"></p><button type="button" class="menu" id="menu">Browse</button></div>
+ <div class="tools"><input type="search" id="q" placeholder="Filter by name"><label><input type="checkbox" id="only"> Flagged only</label></div>
+ <nav class="tree" id="tree"></nav>
+</aside>
+<main id="main"><div class="pane" id="pane"></div></main>
+</div>
+<script id="data" type="application/json">%%DATA%%</script>
+<script>
+const DATA=JSON.parse(document.getElementById('data').textContent);
+const ROOT={id:'home',t:'Overview',g:DATA.root};
+const BY={},PARENT={};
+(function walk(n,p){BY[n.id]=n;if(p)PARENT[n.id]=p;(n.g||[]).forEach(c=>walk(c,n.id));})(ROOT,null);
+const YEL=/^(duplicate|no purpose)/i;const isY=x=>YEL.test(x.label||'');
+function stats(n){if(!n.g){const F=n.f||[];const y=F.filter(isY).length;return{f:1,r:F.length-y,y,x:F.length,flagged:F.length?1:0};}let f=0,r=0,y=0,fl=0;n.g.forEach(c=>{const s=stats(c);f+=s.f;r+=s.r;y+=s.y;fl+=s.flagged});return{f,r,y,x:r+y,flagged:fl};}
+function ry(r,y,big){const c=big?' red':'',d=big?' yellow':'';return (r?`<span class="fc">${r}${c}</span>`:'')+(r&&y?'<span class="sep"> / </span>':'')+(y?`<span class="fy">${y}${d}</span>`:'');}
+const ST={};Object.values(BY).forEach(n=>ST[n.id]=stats(n));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let open=new Set(['home',...DATA.root.map(n=>n.id)]),cur='home';
+function path(id){const p=[];while(id){p.unshift(id);id=PARENT[id];}return p;}
+function vis(n,q,only){if(!n.g){return(!only||(n.f||[]).length)&&(!q||n.t.toLowerCase().includes(q));}return n.g.some(c=>vis(c,q,only))||(!only&&q&&n.t.toLowerCase().includes(q));}
+function tree(){
+ const q=document.getElementById('q').value.trim().toLowerCase(),only=document.getElementById('only').checked;
+ const r=(list)=>'<ul>'+list.filter(n=>vis(n,q,only)).map(n=>{
+  const s=ST[n.id],isG=!!n.g,o=isG&&(open.has(n.id)||q||only);
+  return `<li><div class="row ${isG?'grp':'item'} ${cur===n.id?'on':''}" tabindex="0" data-id="${n.id}"><span class="tw">${isG?(o?'▾':'▸'):''}</span><span class="nm">${esc(n.t)}</span>${isG?`<span class="ct">${s.f}</span>`:''}${ry(s.r,s.y)}</div>${o?r(n.g):''}</li>`}).join('')+'</ul>';
+ document.getElementById('tree').innerHTML=`<div class="row ${cur==='home'?'on':''}" tabindex="0" data-id="home"><span class="tw"></span><span class="nm">Overview</span></div>`+r(DATA.root);
+}
+function crumb(id){return path(id).slice(0,-1).map(i=>`<a data-go="${i}">${esc(BY[i].t)}</a>`).join(' / ');}
+function li(n){const s=ST[n.id];const fl=s.x?ry(s.r,s.y,true):'<span class="ok">clean</span>';const r=n.g?`${s.f} file${s.f==1?'':'s'}<br>${fl}`:fl;
+ const d=n.g?(n.n||''):(n.d||'');return `<div class="li ${n.g?'':'file'}" tabindex="0" data-go="${n.id}"><span class="a">${esc(n.t)}</span><span class="r">${r}</span>${d?`<span class="d">${esc(d)}</span>`:''}</div>`;}
+function view(id){
+ const n=BY[id]||ROOT,P=document.getElementById('pane');let h='';
+ if(id==='home'){
+  const TR=DATA.root.reduce((s,g)=>s+ST[g.id].r,0),TY=DATA.root.reduce((s,g)=>s+ST[g.id].y,0);
+  h=`<h2>Overview</h2><p class="lede">Snapshot taken ${esc(DATA.date)}. Everything Claude keeps about you, checked against your rule.</p><p class="legend"><span><span class="pill hot">Red</span> <b class="tot fc">${TR}</b> information in the wrong place: must move or go</span><span><span class="pill yel">Yellow</span> <b class="tot fy">${TY}</b> duplicate or no purpose: worth checking, your call</span></p><p class="lede">${DATA.secrets?` ${DATA.secrets} secret(s) found in plain text are blanked on this page only.`:''}</p>`;
+  h+='<div class="tiles">'+DATA.root.map(g=>{const s=ST[g.id];return `<div class="tile" tabindex="0" data-go="${g.id}"><b>${esc(g.t)}</b><span class="big">${s.f}</span> <span class="s">files</span><br><span class="fc">${s.r} red</span><span class="sep"> / </span><span class="fy">${s.y} yellow</span></div>`}).join('')+'</div>';
+  const projects=DATA.root.find(g=>g.t==='Projects');
+  if(projects){h+='<h3>Projects</h3><div class="scroll"><table><thead><tr><th>Project</th><th>Memory files</th><th>Drive folder</th><th>Skills</th><th>Red / yellow</th></tr></thead><tbody>'+projects.g.map(p=>{const m=p.g[0],d=p.g[1];return `<tr><td><a data-go="${p.id}" href="#${p.id}">${esc(p.t)}</a></td><td>${ST[m.id].f}</td><td>${d.l?`<a href="${esc(d.l)}" target="_blank" rel="noopener">Open</a>`:'<span class="fc">None</span>'}</td><td>${(p.sk||[]).length}</td><td>${(()=>{const r=ST[p.id].r+(p.skr||0),y=ST[p.id].y+(p.sky||0);return (r||y)?`<span class="fc">${r}</span><span class="sep"> / </span><span class="fy">${y}</span>`:'<span class="ok">0</span>'})()}</td></tr>`}).join('')+'</tbody></table></div>';}
+  h+='<h3>Your rule</h3><div class="rules"><ol>'+DATA.rules.map(r=>`<li>${esc(r)}</li>`).join('')+'</ol></div>';
+ }else if(n.g){
+  h=`<div class="crumb">${crumb(id)}</div><h2>${esc(n.t)}</h2>`+(n.n||n.l?`<p class="lede">${esc(n.n||'')}${n.l?` <a href="${esc(n.l)}" target="_blank" rel="noopener">Open Drive folder</a>`:''}</p>`:'');
+  h+=n.g.length?'<div class="list">'+[...n.g].sort((a,b)=>(ST[b.id].r-ST[a.id].r)||(ST[b.id].y-ST[a.id].y)).map(li).join('')+'</div>':'<p class="lede">Nothing here.</p>';
+ }else{
+  h=`<div class="crumb">${crumb(id)}</div><h2>${esc(n.t)}</h2><p class="lede">${esc(n.k)}${n.d&&n.k!=='skill'&&n.k!=='memory file'?' · '+esc(n.d):''}${n.l?` · <a href="${esc(n.l)}" target="_blank" rel="noopener">Open</a>`:''}</p>`;
+  const F=[...(n.f||[])].sort((a,b)=>isY(a)-isY(b));
+  h+=F.length?'<h3>Flags</h3><ul class="flags">'+F.map(x=>`<li><span class="pill ${isY(x)?'yel':'hot'}">${isY(x)?'Yellow':'Red'} · ${esc(x.label)}</span><span>${esc(x.line)}</span>${x.suggest?`<span class="sg">→ ${esc(x.suggest)}</span>`:''}</li>`).join('')+'</ul>':'<p class="ok">No issues found.</p>';
+  if(n.rows)h+='<h3>Files</h3><div class="scroll"><table><thead><tr><th>File</th><th>Kind</th><th>Modified</th></tr></thead><tbody>'+n.rows.map(r=>`<tr><td>${r[3]?`<a href="${esc(r[3])}" target="_blank" rel="noopener">${esc(r[0])}</a>`:esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')+'</tbody></table></div>';
+  if(n.b)h+=`<h3>Full text</h3><pre>${esc(n.b)}</pre>`;
+ }
+ P.innerHTML=h;document.getElementById('main').scrollTop=0;window.scrollTo(0,0);
+}
+function go(id){if(!BY[id])id='home';cur=id;path(id).forEach(i=>open.add(i));tree();view(id);try{if(location.hash.slice(1)!==id)history.replaceState(null,'','#'+id)}catch(e){}if(window.innerWidth<=760)document.getElementById('side').classList.add('closed');}
+document.addEventListener('click',e=>{
+ const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go);return;}
+ const r=e.target.closest('.row');if(r){const id=r.dataset.id,n=BY[id];if(n&&n.g&&id!=='home'){if(cur===id&&open.has(id))open.delete(id);else open.add(id);}go(id);}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const t=e.target.closest('[data-go],.row');if(t)t.click();}});
+document.getElementById('q').addEventListener('input',tree);
+document.getElementById('only').addEventListener('change',tree);
+document.getElementById('menu').addEventListener('click',()=>document.getElementById('side').classList.toggle('closed'));
+document.getElementById('snap').textContent='Snapshot '+DATA.date;
+if(window.innerWidth>760)document.getElementById('side').classList.remove('closed');
+go(location.hash.slice(1)||'home');
+</script>
