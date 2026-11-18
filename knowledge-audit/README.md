@@ -5,6 +5,8 @@ Puts Claude on Claude. It reads everything Claude keeps about you (memory, peopl
 - **Red:** information in the wrong place. It has to move or go (a step-by-step procedure sitting in memory, a balance copied into a skill, a filled-in template).
 - **Yellow:** a duplicate, or something with no clear purpose. Worth a look, your call.
 
+Every run uses the same fixed tests, a text search for the mechanical checks, a second pass that re-checks every flag and looks for misses, and last run's flags as a checklist, so you can compare one run with the next and see what you fixed.
+
 You get a clickable Knowledge map page and a numbered list of up to 20 fixes you can approve with "yes 1-6, no 7". Nothing changes until you say so.
 
 ## Install (claude.ai web or desktop app)
@@ -17,10 +19,13 @@ Optional: connect Google Drive to also check each project's Drive folder.
 
 ## Make it yours
 
-The default schema is in SKILL.md under "The rules". If you already keep your own rules for where knowledge lives in your Claude preferences, the skill uses those instead. Projects you have archived can go under "Skip list" at the bottom of SKILL.md (the skill offers to add them for you).
+The default schema is in SKILL.md under "The rules". If you already keep your own rules for where knowledge lives in your Claude preferences, the skill uses those instead. Archived projects, flags you have ruled on, and anything you choose to keep as is go in the Skip list, Decisions and Standing exceptions sections at the bottom of SKILL.md (the skill offers to add them for you).
 
 ## Files
 
 - `SKILL.md`: the instructions Claude follows
+- `assets/fixed-tests.txt`: the tests every file is checked against
+- `assets/REVIEW.md`: the second-pass brief
+- `scripts/mech.py`: the text search for mechanical checks
 - `scripts/build_page.py`: builds the Knowledge map page
 - `assets/tpl.html`: the page template (no personal data; the script fills it in)

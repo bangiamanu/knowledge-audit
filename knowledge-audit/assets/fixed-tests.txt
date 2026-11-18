@@ -1,0 +1,48 @@
+READ-ONLY. Never edit memory, skills, Drive or sheets, and never call a memory write, edit or delete tool. You only read, copy into /home/claude/kaudit/, and write your own flag and notes files there.
+
+STATUS means something expected to change or expire: a plan, a pending decision, an open to-do, something in progress, an upcoming or just-passed event. A fact with a date is not status ("left on Sept 30" is a fact; "planning to increase her frequency" is status).
+
+Apply EVERY test to EVERY line of every file in your scope.
+
+GLOBAL memory (/profile.md, /preferences.md, /areas, /people, /topics):
+- G1 Procedure in memory (red): a step sequence or tool method (which tool, which call, in what order). A one-line rule about how the user wants things is NOT a procedure. easy=true when a skill already holds the steps.
+- G2 Project status in memory (red): any status line, dated or not.
+- G3 Single-project fact in global (red): a file or line only ONE active project would ever use. Name the project. Friends, family, taste, home, the user's own agents and anything a non-project chat would use are global and fine. easy=true when the whole file moves as is.
+- G4 Duplicate (yellow): the same fact or rule also sits in a skill or another memory file. Name the copy to keep.
+- G5 No purpose (yellow): nothing would go wrong without it. Be sparing; taste notes earn their place.
+- G6 Unclear home (red, easy): a broken pointer: a [[link]], memory path or skill name that does not exist. Start the line with "Broken pointer:".
+
+PROJECT memory (/projects/<id>/...) and Drive context docs:
+- P1 Procedure in memory (red): step sequences that belong in a skill. easy=true when a skill already holds them.
+- P2 Project status in memory (red, easy): status with NO date on the line. Suggest adding "As of <date>:".
+- P3 Figures in .md/skill (red): master data a named sheet or doc owns (run figures, lists of records, contact lists a sheet tab holds). Name the sheet.
+- P4 Unclear home (red): a fact a SECOND active project needs. Only flag when you can name that second project and a concrete use for it there.
+- P5 Duplicate (yellow): the same fact also in global memory, a skill, a sheet or another project. Name the copy to keep.
+- P6 Unclear home (red, easy): broken pointer, as G6.
+- P7 No purpose (yellow): sparing.
+
+SKILLS (do NOT flag the procedure itself; rules a run needs stay in the skill):
+- S1 Figures in .md/skill (red, easy): an amount, count, size, balance or price recorded from a past run. NOT a flag: fixed thresholds and limits, standing vendor prices and fees the run must know, dated lessons with no figure, slow-changing settings no sheet holds kept in one labelled place with the date set, IDs, gids, links, business phone numbers.
+- S2 Figures in .md/skill (red, easy): a stored column letter, row number or cell reference the run relies on. Column NAMES are fine (the rules allow them): never flag a list of a sheet's column names. NOT a flag: A1/R1C1 notation used generically in an API call the run builds from headers found at run time.
+- S3 Filled-in template (red, easy): a real route, date, name or figure inside a template or URL pattern that should carry placeholders, unless under an "EXAMPLE ONLY" heading.
+- S4 Unclear home (red): a fact about the user, a person or a project that is NOT a rule this run needs, or that other skills or chats need too, or project status. If the run needs it as a rule, it stays.
+- S5 Naming (red, easy): the name does not start with a valid prefix. Suggest the rename.
+- S6 Duplicate (yellow): the same rule or fact also sits in memory or another skill. Name the copy to keep.
+- S7 Unclear home (red, easy): broken pointer to a memory path, file or skill that does not exist. Start the line with "Broken pointer:".
+- S8 Unclear home (red): a full account number, door code, password or token (standing exceptions in SKILL.md aside). Start the line with "Secret:" and do NOT quote the secret itself.
+
+Counting: several lines in ONE file that fail the SAME test = ONE flag: quote the first and end the line with "(and N similar)". Count each problem once: when the same text sits in two homes, flag only the copy that should go. Steps and rules a run needs live in the skill; facts about the user, a person or a project live in memory; records a sheet holds live in the sheet.
+Only flag what clearly fails a test. If you have to argue for it, it is not a flag. Not a content review: never flag something for being out of date, wrong or contradicting other content.
+
+Method, in this order:
+1. Memory and Drive workers copy their files VERBATIM into the dump (drop only the bracketed header line the read tool adds). Skills are read in place.
+2. Run the text search on your files: python3 /home/claude/kaudit/mech.py <files or folders>. Judge EVERY hit against the tests: flag it or dismiss it. Hits are candidates, not verdicts.
+3. Read every file line by line against every test for its layer.
+4. Checklist from the last run: the previous flags for your keys are in /home/claude/kaudit/prev/. For EACH one, find the quoted text in the file as it is now. Text gone: it was fixed; leave it out and list it under "fixed" in your notes. Text still there and it fails a test: carry it over with the SAME label, line and suggest, "status":"carried". Text still there but it fails no test (a never-flag decision, dated project status, a rule the run needs): leave it out and list it under "dismissed" with a one-line reason.
+5. Anything you flag that was not in the previous flags gets "status":"new" and "why_new": "file changed since last run" (only for the files RULE.md lists as changed) or "missed before".
+
+Output:
+- Flag file: one JSON object, one key per file or skill checked (full memory path, or skill folder name), [] when clean: {"<key>": [{"label": "<exact label>", "test": "<code>", "line": "<max 20 words, quoted exactly from the file so plain search finds it>", "suggest": "<where it goes or what to do, max 12 words>", "easy": true|false, "status": "carried"|"new", "why_new": "..."}]}
+- Labels, exactly one of: Procedure in memory | Project status in memory | Single-project fact in global | Duplicate | Figures in .md/skill | Naming | Filled-in template | No purpose | Unclear home
+- Notes file, same name under notes/: {"fixed": [{"key","line"}], "dismissed": [{"key","line","reason"}]}
+- Valid JSON, written with the Write tool. The user's own skills are all editable by them; never call any of them built-in or locked.

@@ -5,6 +5,7 @@
 #   skills.json      {skill name: absolute path to its SKILL.md}  (the user's own skills only)
 #   projects.json    {project id: project name}  (projects to audit only)
 #   rules.txt        the rules the audit used, one per line
+# Flags with "status": "new" are marked "new this run" on the page.
 #   drive/inventory.json  optional, only when a Drive (or other file store) check was run
 #   redact.json      optional, [exact secret strings] blanked on the page
 # The page template (tpl.html) sits in ../assets/ next to this script's folder.
@@ -34,7 +35,8 @@ def rd(p): return red(open(p, encoding='utf-8', errors='replace').read())
 def desc(t):
     m = re.search(r'^description:\s*(.+)$', t, re.M)
     return m.group(1).strip().strip('"') if m else ''
-def fl(k): return [{**x, 'line': red(x.get('line', ''))} for x in flags.get(k, [])]
+def mk(F): return [{**x, 'line': red(x.get('line', '')), 'label': x.get('label', '') + (' · new this run' if x.get('status') == 'new' else '')} for x in F]
+def fl(k): return mk(flags.get(k, []))
 
 N = [0]
 def nid():
@@ -67,10 +69,10 @@ for pid, name in sorted(PN.items(), key=lambda x: x[1]):
     if drive_checked:
         pr = dv.get(name)
         if pr:
-            kids = [item(f['title'], 'Drive doc', rd(f['saved_path']) if f.get('saved_path') and os.path.exists(f['saved_path']) else None, f.get('flags', []), f.get('kind', ''), f.get('url')) for f in pr['files'] if f.get('kind') == 'context doc']
+            kids = [item(f['title'], 'Drive doc', rd(f['saved_path']) if f.get('saved_path') and os.path.exists(f['saved_path']) else None, mk(f.get('flags', [])), f.get('kind', ''), f.get('url')) for f in pr['files'] if f.get('kind') == 'context doc']
             oth = [f for f in pr['files'] if f.get('kind') != 'context doc']
             if oth:
-                kids.append({**item('Other files', 'file list', None, [x for f in oth for x in f.get('flags', [])], ', '.join(f'{v} {k}' for k, v in Counter(f.get('kind') for f in oth).items())), 'rows': [[f['title'], f.get('kind', ''), (f.get('modified') or '')[:10], f.get('url') or ''] for f in oth]})
+                kids.append({**item('Other files', 'file list', None, mk([x for f in oth for x in f.get('flags', [])]), ', '.join(f'{v} {k}' for k, v in Counter(f.get('kind') for f in oth).items())), 'rows': [[f['title'], f.get('kind', ''), (f.get('modified') or '')[:10], f.get('url') or ''] for f in oth]})
             drv = group('Drive folder', kids, pr.get('note', ''))
             drv['l'] = pr.get('folder_url')
         else:
